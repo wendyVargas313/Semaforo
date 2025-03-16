@@ -1,0 +1,101 @@
+from threading import Thread, Lock
+import time
+import random
+
+# Clase Semaforo: Representa un semáforo con dos estados (verde y rojo).
+class Semaforo:
+    def __init__(self, estado_inicial="rojo"):
+        self.estado = estado_inicial  # Estado inicial del semáforo
+        self.lock = Lock()  # Lock para garantizar seguridad en entornos multihilo
+
+    def cambiar_estado(self, nuevo_estado):
+        with self.lock:
+            self.estado = nuevo_estado  # Cambia el estado del semáforo
+            print(f"Semáforo cambió a {nuevo_estado}")
+
+    def get_estado(self):
+        with self.lock:
+            return self.estado  # Devuelve el estado actual del semáforo
+
+
+# Clase Cruce: Gestiona los semáforos de dos vías y controla el flujo de tráfico.
+class Cruce:
+    def __init__(self):
+        self.semaforo_via1 = Semaforo("verde")  # Semáforo de la vía 1 (inicia en verde)
+        self.semaforo_via2 = Semaforo("rojo")  # Semáforo de la vía 2 (inicia en rojo)
+        self.lock = Lock()  # Lock para garantizar seguridad en entornos multihilo
+
+    def cambiar_semaforos(self):
+        with self.lock:
+            # Alterna el estado de los semáforos entre verde y rojo
+            if self.semaforo_via1.get_estado() == "verde":
+                self.semaforo_via1.cambiar_estado("rojo")
+                self.semaforo_via2.cambiar_estado("verde")
+            else:
+                self.semaforo_via1.cambiar_estado("verde")
+                self.semaforo_via2.cambiar_estado("rojo")
+
+    def puede_pasar(self, via):
+        # Verifica si un coche o peatón puede pasar por la vía especificada
+        if via == 1:
+            return self.semaforo_via1.get_estado() == "verde"
+        elif via == 2:
+            return self.semaforo_via2.get_estado() == "verde"
+        return False
+
+
+# Clase Coche: Representa un coche que intenta cruzar el cruce.
+class Coche(Thread):
+    def __init__(self, id, via, cruce):
+        Thread.__init__(self)
+        self.id = id  # Identificador único del coche
+        self.via = via  # Vía por la que el coche intenta cruzar (1 o 2)
+        self.cruce = cruce  # Objeto Cruce que gestiona los semáforos
+
+    def run(self):
+        print(f"Coche {self.id} en la vía {self.via} esperando para cruzar")
+        while not self.cruce.puede_pasar(self.via):  # Espera a que el semáforo esté en verde
+            time.sleep(1)
+        print(f"Coche {self.id} en la vía {self.via} está cruzando")
+        time.sleep(random.randint(1, 3))  # Simula el tiempo de cruce
+        print(f"Coche {self.id} en la vía {self.via} ha cruzado")
+
+
+# Clase Peaton: Representa un peatón que intenta cruzar el cruce.
+class Peaton(Thread):
+    def __init__(self, id, cruce):
+        Thread.__init__(self)
+        self.id = id  # Identificador único del peatón
+        self.cruce = cruce  # Objeto Cruce que gestiona los semáforos
+
+    def run(self):
+        print(f"Peatón {self.id} esperando para cruzar")
+        # Espera a que ambos semáforos estén en rojo para cruzar
+        while self.cruce.puede_pasar(1) or self.cruce.puede_pasar(2):
+            time.sleep(1)
+        print(f"Peatón {self.id} está cruzando")
+        time.sleep(random.randint(1, 3))  # Simula el tiempo de cruce
+        print(f"Peatón {self.id} ha cruzado")
+
+
+# Punto de entrada del programa
+if __name__ == '__main__':
+    cruce = Cruce()  # Crea un cruce con dos semáforos
+    coches = [Coche(i, random.randint(1, 2), cruce) for i in range(10)]  # Crea 10 coches
+    peatones = [Peaton(i, cruce) for i in range(5)]  # Crea 5 peatones
+
+    # Inicia los hilos de los coches y peatones
+    for coche in coches:
+        coche.start()
+
+    for peaton in peatones:
+        peaton.start()
+
+    # Simula el cambio de semáforos cada 5 segundos
+    try:
+        while True:
+            time.sleep(5)
+            cruce.cambiar_semaforos()  # Cambia el estado de los semáforos
+    except KeyboardInterrupt:
+        print("Simulación terminada.")
+      
