@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es">
+  <!-- Define el tipo de documento y el idioma de la página -->
+  <head>
+    <meta charset="UTF-8" />
+    <!-- Especifica la codificación de caracteres para admitir acentos y caracteres especiales -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Hace que la página sea responsive en dispositivos móviles -->
+    <title>Simulación de Semáforo</title>
+    <!-- Título de la pestaña del navegador -->
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <!-- Enlace al archivo CSS para los estilos -->
+  </head>
+  <body>
+    <!-- Título principal de la página -->
+    <h1>Simulación de Cruce Semafórico</h1>
+
+    <div class="cruce">
+      <!-- Semáforo para vía vertical -->
+      <div class="semaforoV" id="semaforo_vertical">
+        <div class="luz rojo" id="semaforo1"></div>
+        <div class="luz verde" id="semaforo2"></div>
+      </div>
+
+      <!-- Carriles verticales (arriba y abajo) -->
+      <div class="carriles_vertical">
+        <img src="/static/flecha_abajo.webp" class="flechaV" alt="↓">
+        <div class="carroV"></div>
+        <div class="carroV"></div>
+      </div>
+
+    <!-- Intersección en el centro -->
+    <div class="interseccion"></div>
+
+      <!-- Carriles horizontales (izquierda y derecha) -->
+      <div class="carriles_horizontal">
+        <img src="/static/flecha_derecha.webp" class="flechaH" alt="→">
+        <div class="carroH"></div>
+        <div class="carroH"></div>
+      </div>
+
+      <!-- Semáforo para vía horizontal -->
+      <div class="semaforoH" id="semaforo_horizontal">
+        <div class="luz verde" id="semaforo3"></div>
+        <div class="luz rojo" id="semaforo4"></div>
+      </div>
+    </div>
+
+    <button id="startSimulation">Iniciar Simulación</button>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
