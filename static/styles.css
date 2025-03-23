@@ -136,6 +136,7 @@ h1 {
     border-radius: 5px;
     top: 50px;  /* Ajuste inicial para carriles verticales */
     left: 50px; /* Centrado en la vía vertical */
+    z-index: 100;
 }
 
 .carroH {

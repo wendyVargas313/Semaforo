@@ -31,6 +31,8 @@ function actualizarCoches() {
     fetch("/coches")
         .then(response => response.json())
         .then(coches => {
+            let cocheEnCruce = null;  // Para rastrear si hay un coche cruzando
+            
             coches.forEach(coche => {
                 let cocheElemento = document.getElementById(`coche-${coche.id}`);
                 
@@ -51,20 +53,24 @@ function actualizarCoches() {
                     document.querySelector(".cruce").appendChild(nuevoCoche);
                 }
                 
-                // Actualizar su movimiento si está cruzando
+                 // Verifica si el coche está cruzando y que no haya otro coche en el cruce
                     if (coche.estado === "cruzando") {
+                        if (!cocheEnCruce || cocheEnCruce === coche.id) {
+                            cocheEnCruce = coche.id;  // Bloquea el cruce para otros coches
+
                         if (coche.via === 1) {
-                            cocheElemento.style.transition = "transform 3s linear";
+                            cocheElemento.style.transition = "transform 3s linear"; //Tiempo de animación
                             cocheElemento.style.transform = "translateY(150px)"; // Se mueve hacia abajo
                         } else {
                             cocheElemento.style.transition = "transform 3s linear";
                             cocheElemento.style.transform = "translateX(150px)"; // Se mueve hacia la derecha
                         }
                     }
-                });
-            })
-            .catch(error => console.error("Error al obtener los coches:", error));
-    }
+                }
+            });
+        })
+        .catch(error => console.error("Error al obtener los coches:", error));
+}
 
 // Función para mover los carros
 function moverCarros(semaforo1, semaforo2) {

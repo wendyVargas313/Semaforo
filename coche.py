@@ -12,8 +12,10 @@ class Coche(Thread):
 
     def run(self):
         print(f"Coche {self.id} en la vía {self.via} esperando para cruzar")
-        while not self.cruce.puede_pasar(self.via):  # Espera a que el semáforo esté en verde
-            time.sleep(1)
+        while not self.cruce.puede_pasar(self.via, self.id):  # Espera si hay otro coche en el cruce
+            time.sleep(1)  # para hacer más rápido el cruce
         print(f"Coche {self.id} en la vía {self.via} está cruzando")
         time.sleep(random.randint(1, 3))  # Simula el tiempo de cruce
         print(f"Coche {self.id} en la vía {self.via} ha cruzado")
+        
+        self.cruce.liberar_cruce()  # Libera el cruce después de cruzar

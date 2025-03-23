@@ -40,7 +40,7 @@ def start_simulation():
         thread.start()
         
         #Crear coches que intentan cruzar
-        for i in range(2):  # Crear 5 coches
+        for i in range(2):  # Crear 2 coches
             via = (i % 2) + 1  # Alternar entre las dos vías
             coche = Coche(i, via, cruce)
             coches_en_cruce.append({"id": i, "via": via, "estado": "esperando"})
